@@ -131,6 +131,10 @@ def minimax(board):
         best_score = math.inf
     best_move = (-1,-1)
 
+    # implementing alpha beta pruning
+    alpha = -math.inf
+    beta = math.inf
+
     for action in actions(board):
         # maximiser
         if player(board) == X:
@@ -139,26 +143,42 @@ def minimax(board):
             if score > best_score:
                 best_score = score
                 best_move = action
+            alpha = max(score, alpha)
+            if beta <= alpha:
+                break
         # minimiser
         else:
             score = max_val(result(board,action))
             if score < best_score:
                 best_score = score
                 best_move = action
+            beta = min(score, beta)
+            if beta <= alpha:
+                break
     return best_move
 
 def max_val(board):
+    alpha = -math.inf
+    beta = math.inf
     if terminal(board):
         return utility(board)
     best_score = -math.inf
     for action in actions(board):
         best_score = max(best_score, min_val(result(board,action)))
+        alpha = max(best_score, alpha)
+        if beta <= alpha:
+            break
     return best_score
 
 def min_val(board):
+    alpha = -math.inf
+    beta = math.inf
     if terminal(board):
         return utility(board)
     best_score = math.inf
     for action in actions(board):
         best_score = min(best_score, max_val(result(board,action)))
+        beta = min(best_score, beta)
+        if beta <= alpha:
+            break
     return best_score
